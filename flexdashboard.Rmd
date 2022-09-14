@@ -1,0 +1,104 @@
+---
+title: "Google Capstone Project"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(highcharter)
+library(viridis)
+library(lubridate)
+setwd("C:/Users/user/Documents/R")
+getwd()
+
+dt <- dir("data", full.name = T) %>% 
+  map_df(~read_csv(.,n_max = 1000, col_types = list(col_character(), col_factor(levels=c("electric_bike","classic_bike","docked_bike")), col_datetime(),col_datetime(),col_character(),col_character(),col_character(), col_character(),col_double(),col_double(),col_double(),col_double(), col_factor(levels=c("member","casual")))))
+#Removing null values (na)
+
+dt1 <- dt %>% 
+  filter(!is.na(start_station_name)) 
+
+dt2 <- dt1 %>% 
+  filter(!is.na(end_station_name))
+
+dt3<- dt2 %>% select(-start_station_id,-end_station_id)
+
+# we are working with dt3
+
+
+
+```
+Customers
+=======================================================================
+
+Column {data-width=325}
+-----------------------------------------------------------------------
+
+
+###Types of customers and bikes used
+
+```{r}
+
+p <- ggplot(data = dt3)+
+  geom_bar(mapping = aes(x = member_casual, fill = rideable_type))+
+  labs(title = "Customers and bikes used")+
+  xlab("Customer Type")+
+  ylab("Number of customers")
+
+p + theme_light()
+  
+
+  
+
+
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Peak time
+
+```{r}
+
+rides <- dt3 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()) 
+
+hchart(rides, "bar",
+  hcaes(x = weekday, y = number_of_rides, group = member_casual),
+  color = c("#7CB5EC", "#F7A35C"),
+  name = c("member","casual"),
+  showInLegend = c(TRUE, TRUE)) %>%  
+  hc_title(text="Rides during the week",align="center") %>% 
+  hc_add_theme(hc_theme_handdrawn())
+
+hc_theme_handdrawn()
+
+
+
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart C
+
+```{r}
+
+```
+
+### Chart D
+
+```{r}
+
+```
+
