@@ -12,4 +12,4 @@ As a data analyst my job is to help the marketing team answer the below 3 questi
 3. How can Cyclistic use digital media to influence casual riders to become members?
 
 The data to be analyzed is here https://divvy-tripdata.s3.amazonaws.com/index.html
-
+I will be using R to analyse and visualize the data
